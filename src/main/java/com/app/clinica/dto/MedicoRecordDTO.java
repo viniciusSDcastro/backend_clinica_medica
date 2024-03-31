@@ -11,5 +11,6 @@ public record MedicoRecordDTO(@NotBlank @NotNull String nome,
         String dataNascimento,
         Boolean ativo,
         String especialidade,
-        String crm) {
+        String crm,
+        String telefone) {
 }
