@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "medico")
-public class MedicoModel extends Usuario {
+public class MedicoModel extends UsuarioModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID idMedico;

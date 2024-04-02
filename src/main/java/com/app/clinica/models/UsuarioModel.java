@@ -5,7 +5,7 @@ import java.io.Serializable;
 import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public abstract class Usuario implements Serializable {
+public abstract class UsuarioModel implements Serializable {
 
     private String nome;
     private String sobrenome;
