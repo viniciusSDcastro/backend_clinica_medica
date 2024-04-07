@@ -12,48 +12,38 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "medico")
-public class MedicoModel {
+@Table(name = "secretaria")
+public class SecretariaModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID idMedico;
-    private String crm;
-    private String especialidade;
+    private UUID idSecretaria;
+    private String ala;
 
     @OneToOne
     @JoinColumn(name = "usuario_cpf")
     private UsuarioModel usuario;
 
-    public UUID getIdMedico() {
-        return this.idMedico;
+    public UUID getIdSecretaria() {
+        return idSecretaria;
     }
 
-    public void setIdMedico(UUID id) {
-        this.idMedico = id;
+    public void setIdSecretaria(UUID idSecretaria) {
+        this.idSecretaria = idSecretaria;
     }
 
-    public String getCrm() {
-        return this.crm;
+    public String getAla() {
+        return ala;
     }
 
-    public void setCrm(String crm) {
-        this.crm = crm;
-    }
-
-    public String getEspecialidade() {
-        return this.especialidade;
-    }
-
-    public void setEspecialidade(String especialidade) {
-        this.especialidade = especialidade;
+    public void setAla(String ala) {
+        this.ala = ala;
     }
 
     public UsuarioModel getUsuario() {
-        return this.usuario;
+        return usuario;
     }
 
     public void setUsuario(UsuarioModel usuario) {
         this.usuario = usuario;
     }
-
 }

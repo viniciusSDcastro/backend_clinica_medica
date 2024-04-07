@@ -2,19 +2,36 @@ package com.app.clinica.models;
 
 import java.io.Serializable;
 
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+// import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Table;
 
-@MappedSuperclass
-public abstract class UsuarioModel implements Serializable {
+// @MappedSuperclass
+@Entity // Adicionando @Entity para mapear a classe para o banco de dados
+@Table(name = "usuario")
+@Inheritance(strategy = InheritanceType.JOINED)
+public class UsuarioModel implements Serializable {
 
+    @Id
+    private String cpf;
     private String nome;
     private String sobrenome;
     private String email;
     private String senha;
-    private String cpf;
     private String telefone;
     private String dataNascimento;
     private Boolean ativo;
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
 
     public String getNome() {
         return nome;
@@ -70,14 +87,6 @@ public abstract class UsuarioModel implements Serializable {
 
     public void setSenha(String senha) {
         this.senha = senha;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
     }
 
 }
