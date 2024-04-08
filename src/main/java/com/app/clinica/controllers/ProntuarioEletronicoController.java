@@ -69,8 +69,7 @@ public class ProntuarioEletronicoController {
 
         @TokenValidator
         @GetMapping("/prontuario/{id}")
-        public ResponseEntity<Object> buscarConsultaPorId(
-                        @RequestHeader Map<String, String> headers,
+        public ResponseEntity<Object> buscarConsultaPorId(@RequestHeader Map<String, String> headers,
                         @PathVariable(value = "id") UUID id) {
                 Optional<ProntuarioEletronicoModel> prontuario = prontuarioEletronicoRepository.findById(id);
                 if (prontuario.isEmpty()) {
@@ -82,8 +81,7 @@ public class ProntuarioEletronicoController {
 
         @TokenValidator
         @PutMapping("prontuario/{id}")
-        public ResponseEntity<Object> atualizaProntuario(
-                        @RequestHeader Map<String, String> headers,
+        public ResponseEntity<Object> atualizaProntuario(@RequestHeader Map<String, String> headers,
                         @PathVariable(value = "id") UUID id,
                         @RequestBody @Valid ProntuarioEletronicoRecordDTO prontuarioEletronicoRecordDTO) {
                 Optional<ProntuarioEletronicoModel> prontuario = prontuarioEletronicoRepository.findById(id);
@@ -98,8 +96,7 @@ public class ProntuarioEletronicoController {
 
         @TokenValidator
         @DeleteMapping("/prontuario/{id}")
-        public ResponseEntity<Object> deleteProntuario(
-                        @RequestHeader Map<String, String> headers,
+        public ResponseEntity<Object> deleteProntuario(@RequestHeader Map<String, String> headers,
                         @PathVariable(value = "id") UUID id) {
                 Optional<ProntuarioEletronicoModel> prontuario = prontuarioEletronicoRepository.findById(id);
                 if (prontuario.isEmpty()) {
@@ -108,5 +105,4 @@ public class ProntuarioEletronicoController {
                 prontuarioEletronicoRepository.delete(prontuario.get());
                 return ResponseEntity.status(HttpStatus.OK).body("Prontuario eletronico deleted successfully.");
         }
-
 }

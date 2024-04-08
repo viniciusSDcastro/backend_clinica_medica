@@ -44,11 +44,7 @@ public class EscalaTrabalhoController {
             @RequestBody @Valid EscalaTrabalhoDTO escalaTrabalhoDTO) {
         var escalaTrabalhoModel = new EscalaTrabalhoModel();
         BeanUtils.copyProperties(escalaTrabalhoDTO, escalaTrabalhoModel);
-        System.out.println(escalaTrabalhoModel);
         var usuarioModel = usuarioRepository.findByCpf(escalaTrabalhoDTO.getCpf());
-        System.out.println(usuarioModel);
-        // BeanUtils.copyProperties(escalaTrabalhoDTO, usuarioModel);
-        // UsuarioModel user = usuarioRepository.save(usuarioModel);
         escalaTrabalhoModel.setUsuario(usuarioModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(escalaTrabalhoRepository.save(escalaTrabalhoModel));
     }

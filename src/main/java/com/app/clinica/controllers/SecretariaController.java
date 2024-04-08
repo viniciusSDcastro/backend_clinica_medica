@@ -38,13 +38,13 @@ public class SecretariaController {
 
     @TokenValidator
     @PostMapping("/secretaria")
-    public ResponseEntity<SecretariaModel> savSecretaria(
-            @RequestHeader Map<String, String> headers,
-            @RequestBody @Valid SecretariaRecordDTO secretariaRecordDTO) {
+    public ResponseEntity<SecretariaModel> savSecretaria(@RequestBody @Valid SecretariaRecordDTO secretariaRecordDTO,
+            @RequestHeader Map<String, String> headers) {
         var secretariaModel = new SecretariaModel();
         BeanUtils.copyProperties(secretariaRecordDTO, secretariaModel);
         var usuarioModel = new UsuarioModel();
         BeanUtils.copyProperties(secretariaRecordDTO, usuarioModel);
+        usuarioModel.geraSenha();
         UsuarioModel user = usuarioRepository.save(usuarioModel);
         secretariaModel.setUsuario(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(secretariaRepository.save(secretariaModel));
@@ -52,16 +52,14 @@ public class SecretariaController {
 
     @TokenValidator
     @GetMapping("/secretaria")
-    public ResponseEntity<List<SecretariaModel>> buscarSecretaria(
-            @RequestHeader Map<String, String> headers) {
+    public ResponseEntity<List<SecretariaModel>> buscarSecretaria(@RequestHeader Map<String, String> headers) {
         return ResponseEntity.status(HttpStatus.OK).body(secretariaRepository.findAll());
     }
 
     @TokenValidator
     @GetMapping("/secretaria/{id}")
-    public ResponseEntity<Object> buscarSecretariaPorId(
-            @RequestHeader Map<String, String> headers,
-            @PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> buscarSecretariaPorId(@PathVariable(value = "id") UUID id,
+            @RequestHeader Map<String, String> headers) {
         Optional<SecretariaModel> secretario0 = secretariaRepository.findById(id);
         if (secretario0.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Secretaria não encontrado!");
@@ -71,10 +69,8 @@ public class SecretariaController {
 
     @TokenValidator
     @PutMapping("secretaria/{id}")
-    public ResponseEntity<Object> atualizaSecretaria(
-            @RequestHeader Map<String, String> headers,
-            @PathVariable(value = "id") UUID id,
-            @RequestBody @Valid SecretariaRecordDTO secretariaRecordDTO) {
+    public ResponseEntity<Object> atualizaSecretaria(@PathVariable(value = "id") UUID id,
+            @RequestBody @Valid SecretariaRecordDTO secretariaRecordDTO, @RequestHeader Map<String, String> headers) {
         Optional<SecretariaModel> secretario0 = secretariaRepository.findById(id);
         if (secretario0.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Secretaria não encontrado!");

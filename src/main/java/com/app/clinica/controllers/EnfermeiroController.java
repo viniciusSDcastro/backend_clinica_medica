@@ -37,17 +37,14 @@ public class EnfermeiroController {
 
     @TokenValidator
     @GetMapping("/enfermeiros")
-    public ResponseEntity<List<EnfermeiroModel>> buscarEnfermeiros(
-        @RequestHeader Map<String, String> headers,
-    ) {
+    public ResponseEntity<List<EnfermeiroModel>> buscarEnfermeiros(@RequestHeader Map<String, String> headers) {
         return ResponseEntity.status(HttpStatus.OK).body(enfermeiroRepository.findAll());
     }
 
     @TokenValidator
     @GetMapping("/enfermeiros/{id}")
-    public ResponseEntity<Object> buscarEnfermeiroPorId(
-            @RequestHeader Map<String, String> headers,
-            @PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> buscarEnfermeiroPorId(@PathVariable(value = "id") UUID id,
+            @RequestHeader Map<String, String> headers) {
         Optional<EnfermeiroModel> enfermeiro0 = enfermeiroRepository.findById(id);
         if (enfermeiro0.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("enfermeiro não encontrado!");
@@ -57,13 +54,13 @@ public class EnfermeiroController {
 
     @TokenValidator
     @PostMapping("/enfermeiros")
-    public ResponseEntity<EnfermeiroModel> saveEnfermeiro(
-            @RequestHeader Map<String, String> headers,
-            @RequestBody @Valid EnfermeiroRecordDTO enfermeiroRecordDTO) {
+    public ResponseEntity<EnfermeiroModel> saveEnfermeiro(@RequestBody @Valid EnfermeiroRecordDTO enfermeiroRecordDTO,
+            @RequestHeader Map<String, String> headers) {
         var enfermeiroModel = new EnfermeiroModel();
         BeanUtils.copyProperties(enfermeiroRecordDTO, enfermeiroModel);
         var usuarioModel = new UsuarioModel();
         BeanUtils.copyProperties(enfermeiroRecordDTO, usuarioModel);
+        usuarioModel.geraSenha();
         UsuarioModel user = usuarioRepository.save(usuarioModel);
         enfermeiroModel.setUsuario(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(enfermeiroRepository.save(enfermeiroModel));
@@ -71,10 +68,8 @@ public class EnfermeiroController {
 
     @TokenValidator
     @PutMapping("enfermeiro/{id}")
-    public ResponseEntity<Object> atualizaEnfermeiro(
-            @RequestHeader Map<String, String> headers,
-            @PathVariable(value = "id") UUID id,
-            @RequestBody @Valid EnfermeiroRecordDTO enfermeiroRecordDTO) {
+    public ResponseEntity<Object> atualizaEnfermeiro(@PathVariable(value = "id") UUID id,
+            @RequestBody @Valid EnfermeiroRecordDTO enfermeiroRecordDTO, @RequestHeader Map<String, String> headers) {
         Optional<EnfermeiroModel> enfermeiro = enfermeiroRepository.findById(id);
         if (enfermeiro.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Enfermeiro não encontrado!");

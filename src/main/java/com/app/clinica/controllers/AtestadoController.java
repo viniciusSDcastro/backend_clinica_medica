@@ -54,8 +54,7 @@ public class AtestadoController {
     @TokenValidator
     @GetMapping("/atestado")
     public ResponseEntity<List<AtestadoModel>> buscarAtestadps(
-        @RequestHeader Map<String, String> headers,
-    ) {
+            @RequestHeader Map<String, String> headers) {
         return ResponseEntity.status(HttpStatus.OK).body(atestadoRepository.findAll());
     }
 
@@ -99,5 +98,4 @@ public class AtestadoController {
         atestadoRepository.delete(atestado.get());
         return ResponseEntity.status(HttpStatus.OK).body("atestado deleted successfully.");
     }
-
 }

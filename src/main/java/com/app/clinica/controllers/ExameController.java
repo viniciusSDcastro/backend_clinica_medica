@@ -1,6 +1,7 @@
 package com.app.clinica.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.clinica.dto.ExameRecordDTO;
@@ -24,7 +25,7 @@ import com.app.clinica.models.ExameModel;
 import com.app.clinica.repositories.EnfermeiroRepository;
 import com.app.clinica.repositories.ExameReposistory;
 import com.app.clinica.repositories.PacienteRepository;
-import com.app.clinica.validators.Token.Validator;
+import com.app.clinica.validators.TokenValidator;
 
 import jakarta.validation.Valid;
 
@@ -42,7 +43,9 @@ public class ExameController {
 
     @TokenValidator
     @PostMapping("/exame")
-    public ResponseEntity<ExameModel> saveExame(@RequestHeader Map<String, String> headers, @RequestBody ExameRecordDTO exameRecordDTO) {
+    public ResponseEntity<ExameModel> saveExame(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody ExameRecordDTO exameRecordDTO) {
         var exameModel = new ExameModel();
         BeanUtils.copyProperties(exameRecordDTO, exameModel);
 
@@ -58,13 +61,16 @@ public class ExameController {
 
     @TokenValidator
     @GetMapping("/exame")
-    public ResponseEntity<List<ExameModel>> buscarExames(@RequestHeader Map<String, String> headers) {
+    public ResponseEntity<List<ExameModel>> buscarExames(
+            @RequestHeader Map<String, String> headers) {
         return ResponseEntity.status(HttpStatus.OK).body(exameReposistory.findAll());
     }
 
     @TokenValidator
     @GetMapping("/exame/{id}")
-    public ResponseEntity<Object> buscarConsultaPorId(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> buscarConsultaPorId(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable(value = "id") UUID id) {
         Optional<ExameModel> exame = exameReposistory.findById(id);
         if (exame.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Exame não encontrado!");
@@ -74,7 +80,9 @@ public class ExameController {
 
     @TokenValidator
     @PutMapping("exame/{id}")
-    public ResponseEntity<Object> atualizaAtestado(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") UUID id,
+    public ResponseEntity<Object> atualizaAtestado(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable(value = "id") UUID id,
             @RequestBody @Valid ExameRecordDTO exameRecordDTO) {
         Optional<ExameModel> exame = exameReposistory.findById(id);
         if (exame.isEmpty()) {
@@ -88,7 +96,9 @@ public class ExameController {
 
     @TokenValidator
     @DeleteMapping("/exame/{id}")
-    public ResponseEntity<Object> deleteExame(@RequestHeader Map<String, String> headers, @PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> deleteExame(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable(value = "id") UUID id) {
         Optional<ExameModel> exame = exameReposistory.findById(id);
         if (exame.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("exame not found.");
@@ -96,5 +106,4 @@ public class ExameController {
         exameReposistory.delete(exame.get());
         return ResponseEntity.status(HttpStatus.OK).body("exame deleted successfully.");
     }
-
 }

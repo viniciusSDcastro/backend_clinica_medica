@@ -25,6 +25,7 @@ import com.app.clinica.models.MedicoModel;
 import com.app.clinica.repositories.ConsultaRepository;
 import com.app.clinica.repositories.MedicoRepository;
 import com.app.clinica.repositories.PacienteRepository;
+import com.app.clinica.validators.TokenValidator;
 
 import jakarta.validation.Valid;
 
@@ -45,7 +46,6 @@ public class ConsultaController {
     public ResponseEntity<ConsultaModel> saveConsulta(
             @RequestHeader Map<String, String> headers,
             @RequestBody @Valid ConsultaRecordDTO consultaRecordDTO) {
-        // TODO: process POST request
         var consultaModel = new ConsultaModel();
         BeanUtils.copyProperties(consultaRecordDTO, consultaModel);
         MedicoModel medicoModel = medicoRepository.findByIdMedico(UUID.fromString(consultaRecordDTO.getIdMedico()));
@@ -60,8 +60,7 @@ public class ConsultaController {
     @TokenValidator
     @GetMapping("/consulta")
     public ResponseEntity<List<ConsultaModel>> buscarConsultas(
-        @RequestHeader Map<String, String> headers,
-    ) {
+            @RequestHeader Map<String, String> headers) {
         return ResponseEntity.status(HttpStatus.OK).body(consultaRepository.findAll());
     }
 

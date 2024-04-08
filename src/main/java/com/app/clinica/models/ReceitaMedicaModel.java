@@ -7,37 +7,30 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+// import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "requisicao")
-public class RequisicaoModel {
+@Table(name = "receita_medica")
+public class ReceitaMedicaModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID idRequisicao;
+    private UUID idReceita;
     private String titulo;
-    private Boolean urgente;
     private String descricao;
+    private String validade;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_cpf")
-    private UsuarioModel usuario;
+    @OneToOne
+    @JoinColumn(name = "idConsulta")
+    private ConsultaModel consulta;
 
-    public UUID getIdRequisicao() {
-        return idRequisicao;
+    public UUID getIdReceita() {
+        return idReceita;
     }
 
-    public void setIdRequisicao(UUID idRequisicao) {
-        this.idRequisicao = idRequisicao;
-    }
-
-    public Boolean getUrgente() {
-        return urgente;
-    }
-
-    public void setUrgente(Boolean urgente) {
-        this.urgente = urgente;
+    public void setIdReceita(UUID idReceita) {
+        this.idReceita = idReceita;
     }
 
     public String getDescricao() {
@@ -56,11 +49,20 @@ public class RequisicaoModel {
         this.titulo = titulo;
     }
 
-    public UsuarioModel getUsuario() {
-        return usuario;
+    public String getValidade() {
+        return validade;
     }
 
-    public void setUsuario(UsuarioModel usuario) {
-        this.usuario = usuario;
+    public void setValidade(String validade) {
+        this.validade = validade;
     }
+
+    public ConsultaModel getConsulta() {
+        return consulta;
+    }
+
+    public void setConsulta(ConsultaModel consulta) {
+        this.consulta = consulta;
+    }
+
 }

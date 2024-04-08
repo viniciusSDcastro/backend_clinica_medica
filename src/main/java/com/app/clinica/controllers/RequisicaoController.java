@@ -38,9 +38,8 @@ public class RequisicaoController {
 
     @TokenValidator
     @PostMapping("/requisicao")
-    public ResponseEntity<RequisicaoModel> saveRequisicao(
-            @RequestHeader Map<String, String> headers,
-            @RequestBody @Valid RequisicaoRecordDTO requisicaoRecordDTO) {
+    public ResponseEntity<RequisicaoModel> saveRequisicao(@RequestBody @Valid RequisicaoRecordDTO requisicaoRecordDTO,
+            @RequestHeader Map<String, String> headers) {
         var requisicaoModel = new RequisicaoModel();
         BeanUtils.copyProperties(requisicaoRecordDTO, requisicaoModel);
         var usuarioModel = usuarioRepository.findByCpf(requisicaoRecordDTO.getUsuarioCpf());
@@ -48,19 +47,16 @@ public class RequisicaoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(requisicaoRepository.save(requisicaoModel));
     }
 
-    @@TokenValidator
+    @TokenValidator
     @GetMapping("/requisicao")
-    public ResponseEntity<List<RequisicaoModel>> buscarRequisicao(
-        @RequestHeader Map<String, String> headers
-    ) {
+    public ResponseEntity<List<RequisicaoModel>> buscarRequisicao(@RequestHeader Map<String, String> headers) {
         return ResponseEntity.status(HttpStatus.OK).body(requisicaoRepository.findAll());
     }
 
-    @@TokenValidator
+    @TokenValidator
     @GetMapping("/requisicao/{id}")
-    public ResponseEntity<Object> buscarRequisicaoPorId(
-        @RequestHeader Map<String, String> headers,    
-    @PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> buscarRequisicaoPorId(@PathVariable(value = "id") UUID id,
+            @RequestHeader Map<String, String> headers) {
         Optional<RequisicaoModel> requisicao = requisicaoRepository.findById(id);
         if (requisicao.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requisição não encontrado!");
@@ -68,12 +64,10 @@ public class RequisicaoController {
         return ResponseEntity.status(HttpStatus.OK).body(requisicao.get());
     }
 
-    @@TokenValidator
+    @TokenValidator
     @PutMapping("requisicao/{id}")
-    public ResponseEntity<Object> atualizaRequisicao(
-        @RequestHeader Map<String, String> headers,    
-    @PathVariable(value = "id") UUID id,
-            @RequestBody @Valid RequisicaoRecordDTO requisicaoRecordDTO) {
+    public ResponseEntity<Object> atualizaRequisicao(@PathVariable(value = "id") UUID id,
+            @RequestBody @Valid RequisicaoRecordDTO requisicaoRecordDTO, @RequestHeader Map<String, String> headers) {
         Optional<RequisicaoModel> consulta = requisicaoRepository.findById(id);
         if (consulta.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Atestado não encontrado!");
@@ -84,11 +78,10 @@ public class RequisicaoController {
         return ResponseEntity.status(HttpStatus.OK).body(requisicaoRepository.save(requisicaoModel));
     }
 
-    @@TokenValidator
+    @TokenValidator
     @DeleteMapping("/requisicao/{id}")
-    public ResponseEntity<Object> deleteRequisicao(
-        @RequestHeader Map<String, String> headers,    
-    @PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> deleteRequisicao(@PathVariable(value = "id") UUID id,
+            @RequestHeader Map<String, String> headers) {
         Optional<RequisicaoModel> requisicao = requisicaoRepository.findById(id);
         if (requisicao.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requisicao not found.");
