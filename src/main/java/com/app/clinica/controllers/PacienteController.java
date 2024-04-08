@@ -42,13 +42,14 @@ public class PacienteController {
 
     @TokenValidator
     @GetMapping("/paciente")
-    public ResponseEntity<List<PacienteModel>> buscarPacientes() {
+    public ResponseEntity<List<PacienteModel>> buscarPacientes(@RequestHeader Map<String, String> headers) {
         return ResponseEntity.status(HttpStatus.OK).body(pacienteRepository.findAll());
     }
 
     @TokenValidator
     @GetMapping("paciente/{id}")
-    public ResponseEntity<Object> buscarMedicoPorId(@PathVariable(value = "id") String id) {
+    public ResponseEntity<Object> buscarMedicoPorId(@RequestHeader Map<String, String> headers,
+            @PathVariable(value = "id") String id) {
         Optional<PacienteModel> paciente0 = pacienteRepository.findById(id);
         if (paciente0.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado!");
