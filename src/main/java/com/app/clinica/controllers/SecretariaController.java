@@ -1,6 +1,7 @@
 package com.app.clinica.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.clinica.dto.SecretariaRecordDTO;
@@ -21,9 +23,11 @@ import com.app.clinica.models.SecretariaModel;
 import com.app.clinica.models.UsuarioModel;
 import com.app.clinica.repositories.SecretariaRepository;
 import com.app.clinica.repositories.UsuarioRepository;
+import com.app.clinica.validators.TokenValidator;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class SecretariaController {
     @Autowired
@@ -32,9 +36,11 @@ public class SecretariaController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @PostMapping("/secretaria")
-    public ResponseEntity<SecretariaModel> savSecretaria(@RequestBody @Valid SecretariaRecordDTO secretariaRecordDTO) {
+    public ResponseEntity<SecretariaModel> savSecretaria(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody @Valid SecretariaRecordDTO secretariaRecordDTO) {
         var secretariaModel = new SecretariaModel();
         BeanUtils.copyProperties(secretariaRecordDTO, secretariaModel);
         var usuarioModel = new UsuarioModel();
@@ -44,15 +50,18 @@ public class SecretariaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(secretariaRepository.save(secretariaModel));
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @GetMapping("/secretaria")
-    public ResponseEntity<List<SecretariaModel>> buscarSecretaria() {
+    public ResponseEntity<List<SecretariaModel>> buscarSecretaria(
+            @RequestHeader Map<String, String> headers) {
         return ResponseEntity.status(HttpStatus.OK).body(secretariaRepository.findAll());
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @GetMapping("/secretaria/{id}")
-    public ResponseEntity<Object> buscarSecretariaPorId(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> buscarSecretariaPorId(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable(value = "id") UUID id) {
         Optional<SecretariaModel> secretario0 = secretariaRepository.findById(id);
         if (secretario0.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Secretaria não encontrado!");
@@ -60,9 +69,11 @@ public class SecretariaController {
         return ResponseEntity.status(HttpStatus.OK).body(secretario0.get());
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @PutMapping("secretaria/{id}")
-    public ResponseEntity<Object> atualizaSecretaria(@PathVariable(value = "id") UUID id,
+    public ResponseEntity<Object> atualizaSecretaria(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable(value = "id") UUID id,
             @RequestBody @Valid SecretariaRecordDTO secretariaRecordDTO) {
         Optional<SecretariaModel> secretario0 = secretariaRepository.findById(id);
         if (secretario0.isEmpty()) {

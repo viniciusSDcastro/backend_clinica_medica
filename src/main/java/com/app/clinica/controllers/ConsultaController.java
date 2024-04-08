@@ -1,6 +1,7 @@
 package com.app.clinica.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.clinica.dto.ConsultaRecordDTO;
@@ -26,6 +28,7 @@ import com.app.clinica.repositories.PacienteRepository;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class ConsultaController {
     @Autowired
@@ -37,9 +40,11 @@ public class ConsultaController {
     @Autowired
     PacienteRepository pacienteRepository;
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @PostMapping("/consulta")
-    public ResponseEntity<ConsultaModel> saveConsulta(@RequestBody @Valid ConsultaRecordDTO consultaRecordDTO) {
+    public ResponseEntity<ConsultaModel> saveConsulta(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody @Valid ConsultaRecordDTO consultaRecordDTO) {
         // TODO: process POST request
         var consultaModel = new ConsultaModel();
         BeanUtils.copyProperties(consultaRecordDTO, consultaModel);
@@ -52,15 +57,19 @@ public class ConsultaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(consultaRepository.save(consultaModel));
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @GetMapping("/consulta")
-    public ResponseEntity<List<ConsultaModel>> buscarConsultas() {
+    public ResponseEntity<List<ConsultaModel>> buscarConsultas(
+        @RequestHeader Map<String, String> headers,
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(consultaRepository.findAll());
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @GetMapping("/consulta/{id}")
-    public ResponseEntity<Object> buscarConsultaPorId(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> buscarConsultaPorId(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable(value = "id") UUID id) {
         Optional<ConsultaModel> consulta0 = consultaRepository.findById(id);
         if (consulta0.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Medico não encontrado!");
@@ -68,9 +77,11 @@ public class ConsultaController {
         return ResponseEntity.status(HttpStatus.OK).body(consulta0.get());
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @PutMapping("consulta/{id}")
-    public ResponseEntity<Object> atualizaAtestado(@PathVariable(value = "id") UUID id,
+    public ResponseEntity<Object> atualizaAtestado(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable(value = "id") UUID id,
             @RequestBody @Valid ConsultaRecordDTO consultaRecordDTO) {
         Optional<ConsultaModel> consulta = consultaRepository.findById(id);
         if (consulta.isEmpty()) {
@@ -82,9 +93,11 @@ public class ConsultaController {
         return ResponseEntity.status(HttpStatus.OK).body(consultaRepository.save(consultaModel));
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @DeleteMapping("/consulta/{id}")
-    public ResponseEntity<Object> deleteConsulta(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> deleteConsulta(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable(value = "id") UUID id) {
         Optional<ConsultaModel> consulta = consultaRepository.findById(id);
         if (consulta.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("consulta not found.");

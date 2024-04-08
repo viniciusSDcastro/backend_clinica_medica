@@ -1,6 +1,7 @@
 package com.app.clinica.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,15 +16,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.clinica.dto.RequisicaoRecordDTO;
 import com.app.clinica.models.RequisicaoModel;
 import com.app.clinica.repositories.RequisicaoRepository;
 import com.app.clinica.repositories.UsuarioRepository;
+import com.app.clinica.validators.TokenValidator;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class RequisicaoController {
     @Autowired
@@ -32,9 +36,11 @@ public class RequisicaoController {
     @Autowired
     UsuarioRepository usuarioRepository;
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @PostMapping("/requisicao")
-    public ResponseEntity<RequisicaoModel> saveRequisicao(@RequestBody @Valid RequisicaoRecordDTO requisicaoRecordDTO) {
+    public ResponseEntity<RequisicaoModel> saveRequisicao(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody @Valid RequisicaoRecordDTO requisicaoRecordDTO) {
         var requisicaoModel = new RequisicaoModel();
         BeanUtils.copyProperties(requisicaoRecordDTO, requisicaoModel);
         var usuarioModel = usuarioRepository.findByCpf(requisicaoRecordDTO.getUsuarioCpf());
@@ -42,15 +48,19 @@ public class RequisicaoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(requisicaoRepository.save(requisicaoModel));
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @@TokenValidator
     @GetMapping("/requisicao")
-    public ResponseEntity<List<RequisicaoModel>> buscarRequisicao() {
+    public ResponseEntity<List<RequisicaoModel>> buscarRequisicao(
+        @RequestHeader Map<String, String> headers
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(requisicaoRepository.findAll());
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @@TokenValidator
     @GetMapping("/requisicao/{id}")
-    public ResponseEntity<Object> buscarRequisicaoPorId(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> buscarRequisicaoPorId(
+        @RequestHeader Map<String, String> headers,    
+    @PathVariable(value = "id") UUID id) {
         Optional<RequisicaoModel> requisicao = requisicaoRepository.findById(id);
         if (requisicao.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requisição não encontrado!");
@@ -58,9 +68,11 @@ public class RequisicaoController {
         return ResponseEntity.status(HttpStatus.OK).body(requisicao.get());
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @@TokenValidator
     @PutMapping("requisicao/{id}")
-    public ResponseEntity<Object> atualizaRequisicao(@PathVariable(value = "id") UUID id,
+    public ResponseEntity<Object> atualizaRequisicao(
+        @RequestHeader Map<String, String> headers,    
+    @PathVariable(value = "id") UUID id,
             @RequestBody @Valid RequisicaoRecordDTO requisicaoRecordDTO) {
         Optional<RequisicaoModel> consulta = requisicaoRepository.findById(id);
         if (consulta.isEmpty()) {
@@ -72,9 +84,11 @@ public class RequisicaoController {
         return ResponseEntity.status(HttpStatus.OK).body(requisicaoRepository.save(requisicaoModel));
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @@TokenValidator
     @DeleteMapping("/requisicao/{id}")
-    public ResponseEntity<Object> deleteRequisicao(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> deleteRequisicao(
+        @RequestHeader Map<String, String> headers,    
+    @PathVariable(value = "id") UUID id) {
         Optional<RequisicaoModel> requisicao = requisicaoRepository.findById(id);
         if (requisicao.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requisicao not found.");

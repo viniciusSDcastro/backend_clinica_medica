@@ -1,6 +1,7 @@
 package com.app.clinica.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.clinica.dto.EnfermeiroRecordDTO;
@@ -21,9 +23,11 @@ import com.app.clinica.models.EnfermeiroModel;
 import com.app.clinica.models.UsuarioModel;
 import com.app.clinica.repositories.EnfermeiroRepository;
 import com.app.clinica.repositories.UsuarioRepository;
+import com.app.clinica.validators.TokenValidator;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class EnfermeiroController {
     @Autowired
@@ -31,15 +35,19 @@ public class EnfermeiroController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @GetMapping("/enfermeiros")
-    public ResponseEntity<List<EnfermeiroModel>> buscarEnfermeiros() {
+    public ResponseEntity<List<EnfermeiroModel>> buscarEnfermeiros(
+        @RequestHeader Map<String, String> headers,
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(enfermeiroRepository.findAll());
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @GetMapping("/enfermeiros/{id}")
-    public ResponseEntity<Object> buscarEnfermeiroPorId(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> buscarEnfermeiroPorId(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable(value = "id") UUID id) {
         Optional<EnfermeiroModel> enfermeiro0 = enfermeiroRepository.findById(id);
         if (enfermeiro0.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("enfermeiro não encontrado!");
@@ -47,9 +55,11 @@ public class EnfermeiroController {
         return ResponseEntity.status(HttpStatus.OK).body(enfermeiro0.get());
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @PostMapping("/enfermeiros")
-    public ResponseEntity<EnfermeiroModel> saveEnfermeiro(@RequestBody @Valid EnfermeiroRecordDTO enfermeiroRecordDTO) {
+    public ResponseEntity<EnfermeiroModel> saveEnfermeiro(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody @Valid EnfermeiroRecordDTO enfermeiroRecordDTO) {
         var enfermeiroModel = new EnfermeiroModel();
         BeanUtils.copyProperties(enfermeiroRecordDTO, enfermeiroModel);
         var usuarioModel = new UsuarioModel();
@@ -59,9 +69,11 @@ public class EnfermeiroController {
         return ResponseEntity.status(HttpStatus.CREATED).body(enfermeiroRepository.save(enfermeiroModel));
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @TokenValidator
     @PutMapping("enfermeiro/{id}")
-    public ResponseEntity<Object> atualizaEnfermeiro(@PathVariable(value = "id") UUID id,
+    public ResponseEntity<Object> atualizaEnfermeiro(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable(value = "id") UUID id,
             @RequestBody @Valid EnfermeiroRecordDTO enfermeiroRecordDTO) {
         Optional<EnfermeiroModel> enfermeiro = enfermeiroRepository.findById(id);
         if (enfermeiro.isEmpty()) {
